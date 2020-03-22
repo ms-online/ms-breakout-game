@@ -106,6 +106,48 @@ function movePaddle() {
   }
 }
 
+// 移动撞击球动画
+function moveBall() {
+  ball.x += ball.dx;
+  ball.y += ball.dy;
+
+  // 撞击左右侧界面
+  if (ball.x + ball.size > canvas.width || ball.x - ball.size < 0) {
+    ball.dx *= -1; // ball.dx = ball.dx * -1 撞击后反弹
+  }
+
+  // 撞击上下边界
+  if (ball.y + ball.size > canvas.height || ball.y - ball.size < 0) {
+    ball.dy *= -1;
+  }
+
+  // 撞击挡板
+  if (
+    ball.x - ball.size > paddle.x &&
+    ball.x + ball.size < paddle.x + paddle.w &&
+    ball.y + ball.size > paddle.y
+  ) {
+    ball.dy = -ball.speed;
+  }
+
+  // 撞击砖块
+  bricks.forEach(column => {
+    column.forEach(brick => {
+      if (brick.visible) {
+        if (
+          ball.x - ball.size > brick.x && // 撞击砖块左侧
+          ball.x + ball.size < brick.x + brick.w && // 撞击砖块右侧
+          ball.y + ball.size > brick.y && // 撞击砖块顶部
+          ball.y - ball.size < brick.y + brick.h // 撞击砖块底部
+        ) {
+          ball.dy *= -1;
+          brick.visible = false;
+        }
+      }
+    });
+  });
+}
+
 // 所有绘制函数
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -119,7 +161,7 @@ function draw() {
 function update() {
   // 动画函数
   movePaddle();
-
+  moveBall();
   // 所有的绘制函数
   draw();
 
