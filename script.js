@@ -142,12 +142,34 @@ function moveBall() {
         ) {
           ball.dy *= -1;
           brick.visible = false;
+
+          increaseSource();
         }
       }
     });
   });
+
+  // 挡板没有接住球体
+  if (ball.y + ball.size > canvas.height) {
+    showAllBricks();
+    score = 0;
+  }
 }
 
+// 增加得分
+function increaseSource() {
+  score++;
+  if (score % (brickColumnCount * brickRowCount) === 0) {
+    showAllBricks();
+  }
+}
+
+// 再次显示所有砖块
+function showAllBricks() {
+  bricks.forEach(column => {
+    column.forEach(brick => (brick.visible = true));
+  });
+}
 // 所有绘制函数
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
